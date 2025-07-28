@@ -1,0 +1,107 @@
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl apply -f config-nginx-pod.yml 
+Error from server (NotFound): error when creating "config-nginx-pod.yml": namespaces "nginx" not found
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl start ns nginx
+error: unknown command "start" for "kubectl"
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl create ns nginx
+namespace/nginx created
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl run --image=nginx -n nginx
+error: NAME is required for run
+See 'kubectl run -h' for help and examples
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl start --image=nginx -n nginx
+error: unknown command "start" for "kubectl"
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl run my-pod --image=nginx -n nginx
+pod/my-pod created
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl apply -f config-nginx-pod.yml 
+pod/nginx created
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl run demo-pod --image=nginx -n my-pod
+Error from server (NotFound): namespaces "my-pod" not found
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   14h
+kube-node-lease   Active   14h
+kube-public       Active   14h
+kube-system       Active   14h
+nginx             Active   5m
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods
+No resources found in default namespace.
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods -n nginx
+NAME     READY   STATUS    RESTARTS   AGE
+my-pod   1/1     Running   0          4m49s
+nginx    1/1     Running   0          4m37s
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl run demo-pod --image=nginx -n nginx
+pod/demo-pod created
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods -n nginx
+NAME       READY   STATUS              RESTARTS   AGE
+demo-pod   0/1     ContainerCreating   0          3s
+my-pod     1/1     Running             0          5m15s
+nginx      1/1     Running             0          5m3s
+kapil@Ubuntu:~/Downloads/NGINX$ vim dep.yml
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl apply -f dep.yml 
+deployment.apps/nginx-deployment created
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods -n nginx
+NAME       READY   STATUS    RESTARTS   AGE
+demo-pod   1/1     Running   0          5m14s
+my-pod     1/1     Running   0          10m
+nginx      1/1     Running   0          10m
+kapil@Ubuntu:~/Downloads/NGINX$ cat dep.yml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 2                     # Number of pod replicas
+  selector:
+    matchLabels:
+      app: nginx                  # Must match pod template labels
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest       # Image to use
+        ports:
+        - containerPort: 80       # Expose port 80 inside the container
+
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl scale deployment/nginx-deployment -n nginx --replicas=5
+error: no objects passed to scale deployments.apps "nginx-deployment" not found
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get deployment --all ns
+error: unknown flag: --all
+See 'kubectl get --help' for usage.
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get deployments --all ns
+error: unknown flag: --all
+See 'kubectl get --help' for usage.
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get deployments --all-ns
+error: unknown flag: --all-ns
+See 'kubectl get --help' for usage.
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get deployments --all-namespaces
+NAMESPACE     NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+default       nginx-deployment   2/2     2            2           6m34s
+kube-system   coredns            2/2     2            2           14h
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl scale deployment/nginx-deployment -n default --replicas=5
+deployment.apps/nginx-deployment scaled
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods 
+NAME                              READY   STATUS              RESTARTS   AGE
+nginx-deployment-96b9d695-hs5qc   1/1     Running             0          7m51s
+nginx-deployment-96b9d695-p88m2   1/1     Running             0          10s
+nginx-deployment-96b9d695-sczdp   1/1     Running             0          7m51s
+nginx-deployment-96b9d695-stvdk   0/1     ContainerCreating   0          10s
+nginx-deployment-96b9d695-wvl85   1/1     Running             0          10s
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl scale deployment/nginx-deployment -n default --replicas=1
+deployment.apps/nginx-deployment scaled
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods 
+NAME                              READY   STATUS      RESTARTS   AGE
+nginx-deployment-96b9d695-hs5qc   1/1     Running     0          8m15s
+nginx-deployment-96b9d695-sczdp   0/1     Completed   0          8m15s
+nginx-deployment-96b9d695-wvl85   0/1     Completed   0          34s
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods 
+NAME                              READY   STATUS    RESTARTS   AGE
+nginx-deployment-96b9d695-hs5qc   1/1     Running   0          8m33s
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods -n default -o wide
+NAME                              READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+nginx-deployment-96b9d695-hs5qc   1/1     Running   0          9m35s   10.244.0.11   minikube   <none>           <none>
+kapil@Ubuntu:~/Downloads/NGINX$ 
+

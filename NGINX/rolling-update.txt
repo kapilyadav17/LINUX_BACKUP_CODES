@@ -1,0 +1,23 @@
+kapil@Ubuntu:~/Downloads/NGINX$ #ROLLING UPDATE IN DEPLOYMENT
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl set image deployment/nginx-deployment -n nginx=nginx:1.27.3
+Error from server (NotFound): namespaces "nginx=nginx:1.27.3" not found
+kapil@Ubuntu:~/Downloads/NGINX$ nginx version
+Command 'nginx' not found, but can be installed with:
+sudo apt install nginx
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl set image deployment/nginx-deployment -n nginx=nginx:1.24
+Error from server (NotFound): namespaces "nginx=nginx:1.24" not found
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl set image deployment/nginx-deployment nginx=nginx:1.24 -n default
+deployment.apps/nginx-deployment image updated
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods -n nginx
+NAME       READY   STATUS    RESTARTS   AGE
+demo-pod   1/1     Running   0          22m
+my-pod     1/1     Running   0          27m
+nginx      1/1     Running   0          27m
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl get pods 
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-5d9cbb7dcc-54x87   1/1     Running   0          25s
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl delete deployment.yml
+error: the server doesn't have a resource type "deployment"
+kapil@Ubuntu:~/Downloads/NGINX$ kubectl delete deployments.yml
+error: the server doesn't have a resource type "deployments"
+

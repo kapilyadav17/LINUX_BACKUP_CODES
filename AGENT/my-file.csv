@@ -1,0 +1,12 @@
+Order ID,Customer Name,Product,Category,Quantity,Price,Total,Order Date,Country
+1001,John Smith,Smartphone,Electronics,1,699,699,2023-01-15,USA
+1002,Alice Brown,Laptop,Electronics,1,999,999,2023-01-16,UK
+1003,Bob Davis,T-shirt,Apparel,3,25,75,2023-01-17,India
+1004,Eve Turner,Blender,Home Appliances,1,45,45,2023-01-18,Canada
+1005,Raj Patel,Shoes,Footwear,2,50,100,2023-01-19,India
+1006,Emily White,Tablet,Electronics,1,450,450,2023-01-20,USA
+1007,Liam Walker,Jacket,Apparel,1,80,80,2023-01-21,UK
+1008,Sophia Hall,Coffee Maker,Home Appliances,1,60,60,2023-01-22,Canada
+1009,Aarav Gupta,Sneakers,Footwear,1,120,120,2023-01-23,India
+1010,Grace Lee,Headphones,Electronics,2,150,300,2023-01-24,USA
+

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Image Updater</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .product { margin-bottom: 20px; }
+        img { margin: 5px; cursor: pointer; border: 2px solid transparent; }
+        img:hover { border-color: #007BFF; }
+    </style>
+</head>
+<body>
+    <h2>Products Without Images</h2>
+    <div id="products">
+        {% for p in products %}
+            <div class="product">
+                <strong>{{ p.name }} ({{ p.code }})</strong><br>
+                <button onclick="fetchImages('{{ p.name | escape }}', '{{ p.id }}')">Fetch Images</button>
+                <div id="images-{{ p.id }}"></div>
+            </div>
+        {% else %}
+            <p>No products without images found.</p>
+        {% endfor %}
+    </div>
+
+<script>
+function fetchImages(name, productId) {
+    fetch('/search_images', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ product_name: name })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const container = document.getElementById(`images-${productId}`);
+        container.innerHTML = '';
+        if (data.images.length === 0) {
+            container.innerHTML = "<p>No images found.</p>";
+            return;
+        }
+
+        data.images.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.width = 100;
+            img.onclick = () => saveImage(url, productId);
+            container.appendChild(img);
+        });
+    });
+}
+
+function saveImage(url, productId) {
+    fetch('/save_image', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ image_url: url, product_id: productId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert('✅ Image saved and product updated!');
+        location.reload();
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  langchain-app:
+    build: .
+    container_name: langchain-container
+    volumes:
+      - .:/app
+    command: python main.py
+    ports:
+      - "8000:8000"

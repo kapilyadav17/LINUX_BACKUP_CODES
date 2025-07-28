@@ -1,0 +1,6 @@
+CREATE TABLE products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    code TEXT,
+    image_url TEXT
+);
